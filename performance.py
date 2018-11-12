@@ -1,5 +1,6 @@
 import os
 import time
+import csv
 import testTree
 import matplotlib.pyplot as plt
 
@@ -8,9 +9,7 @@ dataFiles = os.listdir("./data")
 dataFiles = ["./data/"+i for i in dataFiles]
 dataFiles.sort()
 
-timeMeasure = []
-x = []
-
+stats = []
 
 #MLlib seems to take time to have maximum speed so we "train" it
 print('"Trainig" MLLib to get maximum speed')
@@ -32,11 +31,21 @@ for it, dataFile in enumerate(dataFiles):
   
   print("Total time : " + str(totalTime))
   print("Mean time  : " + str(meanTime))
-  timeMeasure.append(meanTime)
-  x.append(it)
+  
+  #Compute statistics on dataFile
+  size = os.path.getsize(dataFile)
+  numLines = sum(1 for line in open(dataFile))
+  stats.append([dataFile, size, numLines, meanTime])
   print("----------------")
   
 print("Test finished")
+print("----------------")
+print("Writing results on output.csv")
+
+
+with open('output.csv', 'w') as o_file:
+  o_file.write('#file_name, file_size(octect), number_of_line, mean_time\n')
+  wr = csv.writer(o_file)
+  wr.writerows(stats)
   
-plt.bar(x, timeMeasure)
-plt.show()
+print("Results are written")
