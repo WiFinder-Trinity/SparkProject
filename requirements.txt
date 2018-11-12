@@ -1,0 +1,6 @@
+#####Requirement for Spark Project######
+
+# For runing spark and spark MLLib
+numpy
+# To draw beautiful charts !
+matplotlib
