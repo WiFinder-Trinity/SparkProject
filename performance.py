@@ -2,7 +2,6 @@ import os
 import time
 import csv
 import testTree
-import matplotlib.pyplot as plt
 
 NUM_ITERATION = 5
 dataFiles = os.listdir("./data")
@@ -28,6 +27,8 @@ for it, dataFile in enumerate(dataFiles):
   
   totalTime = timeEnd - timeBegin
   meanTime = totalTime/NUM_ITERATION
+  
+  #TODO : Add Analyse phase
   
   print("Total time : " + str(totalTime))
   print("Mean time  : " + str(meanTime))
