@@ -2,6 +2,9 @@ import os
 import time
 import csv
 import testTree
+from pyspark import SparkContext
+
+sc = SparkContext()
 
 NUM_ITERATION = 5
 dataFiles = os.listdir("./data")
@@ -22,7 +25,7 @@ for it, dataFile in enumerate(dataFiles):
   print("Test with file " + dataFile)
   timeBegin = time.time()
   for i in range(0, NUM_ITERATION):
-    testTree.main(dataFile)
+    testTree.main(sc, dataFile)
   timeEnd = time.time()
   
   totalTime = timeEnd - timeBegin
