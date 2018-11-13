@@ -7,7 +7,7 @@ import init
 from pyspark import SparkContext
 
 if (len(sys.argv) < 1)
-    print "Script calling format : performance.py "masterAddress"
+    print "Script calling format : performance.py masterAddress"
 
 else
     init.initSparkContext(sys.argv[1])
