@@ -4,6 +4,6 @@ sparkProtocol = "spark://"
 port = ":7077"
 
 def initSparkContext(masterAddress):
-  sc = SparkContext(spark + masterAddress + port)
+  sc = SparkContext(sparkProtocol + masterAddress + port)
   return sc
 

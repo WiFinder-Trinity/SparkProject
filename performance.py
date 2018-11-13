@@ -6,11 +6,12 @@ import testTree
 import init
 from pyspark import SparkContext
 
-if (len(sys.argv) < 1)
+if (len(sys.argv) < 2):
     print "Script calling format : performance.py masterAddress"
+    exit()
 
-else
-    init.initSparkContext(sys.argv[1])
+else:
+    sc = init.initSparkContext(sys.argv[1])
 
     NUM_ITERATION = 5
     dataFiles = os.listdir("./data")
@@ -22,7 +23,7 @@ else
     #MLlib seems to take time to have maximum speed so we "train" it
     print('"Trainig" MLLib to get maximum speed')
     for i in range(0, NUM_ITERATION):
-      testTree.main(dataFiles[0])
+      testTree.main(sc, dataFiles[0])
 
     print("----------------")
     print("Real test begins")
