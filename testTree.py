@@ -2,7 +2,7 @@ import sys
 from pyspark import SparkContext
 from pyspark.mllib.regression import LabeledPoint
 from pyspark.mllib.tree import DecisionTree
-sc = SparkContext()
+sc = SparkContext("spark://sagittaire-16.lyon.grid5000.fr:7077")
 
 def main(inputFile):
   rawRDD = sc.textFile(inputFile)
