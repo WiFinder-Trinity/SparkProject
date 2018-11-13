@@ -14,7 +14,7 @@ dataFiles.sort()
 stats = []
 
 #MLlib seems to take time to have maximum speed so we "train" it
-print('"Trainig" MLLib to get maximum speed')
+print('"Warming up" MLLib to get maximum speed')
 for i in range(0, NUM_ITERATION):
   testTree.main(dataFiles[0])
 
