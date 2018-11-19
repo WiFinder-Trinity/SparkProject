@@ -6,7 +6,6 @@ from pyspark import SparkContext
 
 sc = SparkContext()
 
-NUM_ITERATION = 5
 dataFiles = os.listdir("./data")
 dataFiles = ["./data/"+i for i in dataFiles]
 dataFiles.sort()
@@ -16,7 +15,7 @@ stats = []
 #MLlib seems to take time to have maximum speed so we "train" it
 print('"Warming up" MLLib to get maximum speed')
 for i in range(0, NUM_ITERATION):
-  testTree.main(dataFiles[0])
+  testTree.main(sc, dataFiles[0])
 
 print("----------------")
 print("Real test begins")
