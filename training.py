@@ -14,6 +14,8 @@ def training(sc, inputFile, numPartitions):
     .map(lambda row: LabeledPoint(row[-1], row[0:-1]))
     
   trainingRDD, testRDD = labeledRDD.randomSplit([0.7, 0.3])
+  model_num = trainingRDD.count()
+  test_num = testRDD.count()
   
   #Training of the model !
   timeBegin = time.time()
@@ -24,20 +26,26 @@ def training(sc, inputFile, numPartitions):
   totalTime = timeEnd - timeBegin
   meanTime = totalTime/NUM_ITERATION
 
-  stats.append(meanTime)
+  stats += [model_num, test_num, meanTime]
   
   print("Total time of training : " + str(totalTime))
   print("Mean time of training : " + str(meanTime))
 
   #Evaluating the model
+  timeBegin = time.time()
   predictions = model.predict(testRDD.map(lambda test: test.features))
+  timeEnd = time.time()
   labelAndPrediction = testRDD.map(lambda test: test.label).zip(predictions)
 
   errorCount = labelAndPrediction.filter(lambda lp: lp[0] != lp[1]).count()
-  accuracy = float(errorCount)/float(testRDD.count())
+  prediction_time = timeEnd - timeBegin
+  mean_prediction_time = prediction_time/float(test_num)
+  accuracy = float(errorCount)/float(test_num)
 
-  stats.append(accuracy)
+  stats = stats + [mean_prediction_time, accuracy] 
   
+  print("Prediction time : " + str(prediction_time))
+  print("Mean prediction time : " + str(mean_prediction_time))
   print("Total number of error : " + str(errorCount))
   print("Error proportion : " + str(accuracy))
 
