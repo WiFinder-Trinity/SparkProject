@@ -2,3 +2,4 @@ data/
 __*
 *.csv
 *.pyc
+output/*

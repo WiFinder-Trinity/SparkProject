@@ -1,62 +1,50 @@
-import os
+from pyspark import SparkContext
 import sys
-import time
+import os
 import csv
 import testTree
-import init
-from pyspark import SparkContext
+import training
 
-if (len(sys.argv) < 2):
-    print "Script calling format : performance.py masterAddress"
-    exit()
-
-else:
-    sc = init.initSparkContext(sys.argv[1])
-
-    NUM_ITERATION = 5
-    dataFiles = os.listdir("./data")
-    dataFiles = ["./data/"+i for i in dataFiles]
-    dataFiles.sort()
-
-    stats = []
-
-    #MLlib seems to take time to have maximum speed so we "train" it
-    print('"Trainig" MLLib to get maximum speed')
-    for i in range(0, NUM_ITERATION):
-      testTree.main(sc, dataFiles[0])
-
-    print("----------------")
-    print("Real test begins")
-    print("----------------")
-    for it, dataFile in enumerate(dataFiles):
-      print("Test with file " + dataFile)
-      timeBegin = time.time()
-      for i in range(0, NUM_ITERATION):
-        testTree.main(sc, dataFile)
-      timeEnd = time.time()
-      
-      totalTime = timeEnd - timeBegin
-      meanTime = totalTime/NUM_ITERATION
-      
-      #TODO : Add Analyse phase
-      
-      print("Total time : " + str(totalTime))
-      print("Mean time  : " + str(meanTime))
-      
-      #Compute statistics on dataFile
-      size = os.path.getsize(dataFile)
-      numLines = sum(1 for line in open(dataFile))
-      stats.append([dataFile, size, numLines, meanTime])
-      print("----------------")
-      
-    print("Test finished")
-    print("----------------")
-    print("Writing results on output.csv")
+sc = SparkContext()
 
 
-    with open('output.csv', 'w') as o_file:
-      o_file.write('#file_name, file_size(octect), number_of_line, mean_time\n')
-      wr = csv.writer(o_file)
-      wr.writerows(stats)
-      
-    print("Results are written")
+if(len(sys.argv) < 3): 
+  print("please give an output file");
+  exit()
+
+OUTPUT_FILE = sys.argv[1]
+NB_PARTITIONS = int(sys.argv[2])
+
+print(NB_PARTITIONS)
+
+with open(OUTPUT_FILE, 'w') as o_file:
+  o_file.write('#file_name, file_size(octect), number_of_lines_model, number_of_lines_test, mean_time_training, mean_time_prediction, accuracy\n')
+
+dataFiles = os.listdir("./data")
+dataFiles = ["./data/"+i for i in dataFiles]
+dataFiles.sort()
+
+#MLlib seems to take time to have maximum speed so we "train" it
+print('"Warming up" MLLib to get maximum speed')
+for i in range(0, 5):
+  testTree.main(sc, dataFiles[0], NB_PARTITIONS)
+
+print("----------------")
+print("Real test begins")
+print("----------------")
+for it, dataFile in enumerate(dataFiles):
+  stats = []  
+  partialStat = training.training(sc, dataFile, NB_PARTITIONS)
+  
+  #Compute statistics on dataFile
+  size = os.path.getsize(dataFile)
+  stats += [dataFile, size]
+  stats += partialStat
+  with open(OUTPUT_FILE, 'a') as o_file:
+    wr = csv.writer(o_file)
+    wr.writerow(stats)
+  print("----------------")
+  
+print("Test finished")
+print("----------------")
+print("Writing results on " + OUTPUT_FILE)
