@@ -17,7 +17,7 @@ Therefore, in our four cases we used for training :
 1. 2 800 lines
 2. 17 500 lines
 3. 70 000 lines
-3. 700 000 lines
+4. 700 000 lines
 
 and for evaluation :
 1. 1 200 lines
